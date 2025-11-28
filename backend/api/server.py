@@ -1,6 +1,7 @@
 """FastAPI server for the Antigravity Agent Hub"""
 
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -14,10 +15,11 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Add CORS middleware for local development
+# Configure CORS from environment or use defaults for development
+cors_origins = os.getenv("CORS_ORIGINS", "*").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,6 +31,15 @@ class TaskRequest(BaseModel):
     task: str
 
 
+def execute_workflow(task: str) -> dict:
+    """Execute the agent workflow with error handling"""
+    try:
+        result = run_workflow({"task": task})
+        return {"result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Workflow execution failed: {str(e)}")
+
+
 @app.get("/")
 async def root():
     """Health check endpoint"""
@@ -38,12 +49,10 @@ async def root():
 @app.post("/run_task")
 async def run_task(req: TaskRequest):
     """Run a task through the agent workflow"""
-    result = run_workflow({"task": req.task})
-    return {"result": result}
+    return execute_workflow(req.task)
 
 
 @app.post("/api/run_task")
 async def api_run_task(req: TaskRequest):
     """Run a task through the agent workflow (with /api prefix for Firebase)"""
-    result = run_workflow({"task": req.task})
-    return {"result": result}
+    return execute_workflow(req.task)
