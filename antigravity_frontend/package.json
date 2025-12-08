@@ -3,13 +3,18 @@
   "version": "1.0.0",
   "description": "Antigravity UI for Agent Hub",
   "private": true,
+  "proxy": "http://localhost:8000",
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@react-three/fiber": "^8.0.27",
-    "@react-three/drei": "^9.56.5",
-    "three": "^0.154.0",
+    "@react-three/fiber": "^8.16.0",
+    "@react-three/drei": "^9.105.0",
+    "three": "^0.163.0",
+    "three-mesh-bvh": "^0.8.0",
     "react-scripts": "5.0.1"
+  },
+  "overrides": {
+    "three-mesh-bvh": "^0.8.0"
   },
   "scripts": {
     "start": "react-scripts start",
