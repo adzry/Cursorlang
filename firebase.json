@@ -1,0 +1,19 @@
+{
+  "hosting": {
+    "public": "antigravity_frontend/build",
+    "rewrites": [
+      {
+        "source": "/api/**",
+        "function": "backend"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "functions": {
+    "source": "backend",
+    "runtime": "python310"
+  }
+}
